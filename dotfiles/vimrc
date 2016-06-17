@@ -1,6 +1,7 @@
 call plug#begin('~/.vim/plugged')
 Plug 'raimondi/delimitmate'
 Plug 'Shougo/deoplete.nvim'
+Plug 'zchee/deoplete-clang'
 Plug 'zchee/deoplete-jedi', { 'for': 'py'}
 Plug 'mattn/emmet-vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -33,7 +34,7 @@ call plug#end()
 set background=dark
 set number "shows line numbers
 syntax enable "set syntax highlighting on
-set colorcolumn=86
+set colorcolumn=80
 set lazyredraw "update screen instead of full redraw
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
@@ -151,6 +152,7 @@ let g:pencil#conceallevel = 0
 
 "Neomake
 autocmd! BufWritePost * Neomake
+let g:neomake_php_phpcs_args_standard='PSR2'
 
 " LATEX
 " IMPORTANT: grep will sometimes skip displaying the file name if you
