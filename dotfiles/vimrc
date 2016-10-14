@@ -2,12 +2,11 @@ call plug#begin('~/.vim/plugged')
 Plug 'raimondi/delimitmate'
 Plug 'Shougo/deoplete.nvim'
 Plug 'zchee/deoplete-clang'
-Plug 'zchee/deoplete-jedi', { 'for': 'py'}
 Plug 'mattn/emmet-vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/indentpython.vim', { 'for': 'py' }
-Plug 'LaTeX-Box-Team/LaTeX-Box', { 'for': 'tex' }
+Plug 'lervag/vimtex', { 'for': 'tex' }
 Plug 'tomasr/molokai'
 Plug 'benekastah/neomake'
 Plug 'rust-lang/rust.vim', { 'for': 'rs' }
@@ -28,9 +27,15 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'guns/vim-clojure-static'
+Plug 'tpope/vim-fireplace'
+Plug 'junegunn/rainbow_parentheses.vim'
+Plug 'lumiliet/vim-twig'
+Plug 'snowiow/docon.vim'
 call plug#end()
 
 "=> VIM Design
+set termguicolors
 set background=dark
 set number "shows line numbers
 syntax enable "set syntax highlighting on
@@ -116,6 +121,10 @@ let g:clang_format#style_options = {
             \ "Standard" : "C++11",
             \ "BreakBeforeBraces" : "Stroustrup"}
 
+"Docon
+let g:docon_browser = 0
+let g:docon_behavior = 0
+
 "Deoplete
 let g:deoplete#enable_at_startup = 1
 autocmd CompleteDone * pclose! "Close Preview window after completion
@@ -200,9 +209,9 @@ vmap <Leader>P "+P
 "turn off search results
 nnoremap <silent> <leader>r :<C-u>nohlsearch<CR><C-l> 
 "switch to previous tab
-nmap <C-Left> :tabprevious<CR> 
+map <C-h> :tabprevious<CR> 
 "switch to next tab
-nmap <C-Right> :tabnext<CR> 
+map <C-l> :tabnext<CR> 
 
 "Press to switch between header and implementation in C/C++
 map <F4> :e %:p:s,.hpp$,.X123X,:s,.cpp$,.hpp,:s,.X123X$,.cpp,<CR>
@@ -211,8 +220,10 @@ map <F4> :e %:p:s,.hpp$,.X123X,:s,.cpp$,.hpp,:s,.X123X$,.cpp,<CR>
 "ClangFormat
 nnoremap <Leader>f :ClangFormat<CR>
 
+"Docon
+nnoremap <Leader>d :DocOnToggle<CR>
 
-""Deoplete
+"Deoplete
 inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
@@ -250,3 +261,9 @@ map <F6> :TagbarOpenAutoClose<CR>
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+" Activation based on file type
+augroup rainbow_lisp
+  autocmd!
+  autocmd FileType lisp,clojure,scheme RainbowParentheses
+augroup END
