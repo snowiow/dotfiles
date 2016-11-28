@@ -35,6 +35,7 @@ Plug 'lumiliet/vim-twig'
 Plug 'snowiow/docon.vim'
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug '~/workspace/filenav.nvim'
 call plug#end()
 
 "=> VIM Design
@@ -111,6 +112,35 @@ set softtabstop=4 expandtab
 "recognize .phtml template files for zf2
 au BufNewFile,BufRead *.phtml set filetype=html syntax=php
 au BufNewFile,BufRead *.php_cs set filetype=php syntax=php
+
+function! DoPrettyXML()
+  " save the filetype so we can restore it later
+  let l:origft = &ft
+  set ft=
+  " delete the xml header if it exists. This will
+  " permit us to surround the document with fake tags
+  " without creating invalid xml.
+  1s/<?xml .*?>//e
+  " insert fake tags around the entire document.
+  " This will permit us to pretty-format excerpts of
+  " XML that may contain multiple top-level elements.
+  0put ='<PrettyXML>'
+  $put ='</PrettyXML>'
+  silent %!xmllint --format -
+  " xmllint will insert an <?xml?> header. it's easy enough to delete
+  " if you don't want it.
+  " delete the fake tags
+  2d
+  $d
+  " restore the 'normal' indentation, which is one extra level
+  " too deep due to the extra tags we wrapped around the document.
+  silent %<
+  " back to home
+  1
+  " restore the filetype
+  exe "set ft=" . l:origft
+endfunction
+command! PrettyXML call DoPrettyXML()
 
 "=> VIM Plugin Behaviour
 "ClangFormat
@@ -241,9 +271,12 @@ map <C-l> :tabnext<CR>
 "Press to switch between header and implementation in C/C++
 map <F4> :e %:p:s,.hpp$,.X123X,:s,.cpp$,.hpp,:s,.X123X$,.cpp,<CR>
 
+"XML Format
+autocmd Filetype xml nnoremap <leader>f :PrettyXML<CR>
+
 "=> Plugin Custom Keybindings
 "ClangFormat
-nnoremap <Leader>f :ClangFormat<CR>
+autocmd Filetype cpp nnoremap <leader>f :ClangFormat<CR>
 
 "Docon
 nnoremap <Leader>d :DocOnToggle<CR>
@@ -273,7 +306,7 @@ map <leader>v :Vex<CR>
 map <leader>s :Sex<CR>
 
 "PHP-CS-Fixer
-nnoremap <silent><leader>f :call PhpCsFixerFixFile()<CR>
+autocmd Filetype php nnoremap <leader>f :call PhpCsFixerFixFile()<CR>
 
 "Vim-Box
 nnoremap <Leader>ll :Latexmk<CR>
@@ -292,3 +325,4 @@ augroup rainbow_lisp
   autocmd!
   autocmd FileType lisp,clojure,scheme RainbowParentheses
 augroup END
+
